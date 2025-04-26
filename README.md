@@ -34,16 +34,25 @@ The Pearl & Leaves Loyalty Program addresses these issues by implementing an on-
 
 ### Smart Contract
 
-The loyalty program uses a custom ink! smart contract deployed on Polkadot Asset Hub. The contract:
-- Stores shop information
-- Tracks customer purchases
-- Issues badges based on purchase count
-- Emits events for purchases and NFT rewards
+The loyalty program can be implemented using either:
+
+1. **ink! Smart Contract**: A Rust-based contract deployed on Polkadot Asset Hub that:
+   - Stores shop information
+   - Tracks customer purchases
+   - Issues badges based on purchase count
+   - Emits events for purchases and NFT rewards
+
+2. **Solidity via Hardhat**: A Solidity contract deployed using Hardhat and PolkaVM that:
+   - Provides the same functionality as the ink! contract
+   - Leverages familiar Ethereum development tools
+   - Offers robust testing and deployment capabilities
 
 ### Frontend
 
-The React frontend integrates with the smart contract using Polkadot.js API:
-- Connects to user wallets via Polkadot.js extension
+The React frontend integrates with either smart contract implementation using:
+- Polkadot.js API for ink! contracts
+- Ethers.js for Solidity contracts
+- Connects to user wallets via Polkadot.js extension or MetaMask
 - Displays the Pearl & Leaves menu
 - Shows purchase progress toward NFT rewards
 - Provides admin functionality for shop owners
@@ -81,9 +90,13 @@ The React frontend integrates with the smart contract using Polkadot.js API:
 
 ## Technology Stack
 
-- **Smart Contract**: ink! on Polkadot Asset Hub
+- **Smart Contract**: 
+  - ink! on Polkadot Asset Hub, or
+  - Solidity with Hardhat and PolkaVM
 - **Frontend**: React with TypeScript
-- **Blockchain Integration**: Polkadot.js API and ContractPromise
+- **Blockchain Integration**: 
+  - Polkadot.js API and ContractPromise for ink!
+  - Ethers.js for Solidity
 - **Styling**: CSS with responsive design
 
 ## Getting Started
@@ -91,7 +104,7 @@ The React frontend integrates with the smart contract using Polkadot.js API:
 ### Prerequisites
 
 - Node.js and npm
-- Polkadot.js browser extension
+- Polkadot.js browser extension or MetaMask
 - Access to Westend Asset Hub (testnet) or Polkadot Asset Hub (mainnet)
 
 ### Installation
@@ -113,9 +126,19 @@ npm install
 npm start
 ```
 
-### Contract Deployment
+### Contract Deployment Options
+
+#### Option 1: ink! Contract Deployment
 
 See [ink_contract_deployment.md](./docs/ink_contract_deployment.md) for detailed instructions on deploying the ink! contract to Polkadot Asset Hub.
+
+#### Option 2: Hardhat Deployment (Recommended)
+
+See [hardhat_deployment.md](./docs/hardhat_deployment.md) for detailed instructions on deploying the Solidity contract using Hardhat to Polkadot Asset Hub. This approach offers:
+- Familiar Ethereum tooling
+- Robust testing capabilities
+- Simplified deployment process
+- Better compatibility with existing Ethereum development workflows
 
 ### Frontend Deployment
 
@@ -123,7 +146,7 @@ See [frontend_deployment.md](./docs/frontend_deployment.md) for detailed instruc
 
 ## Usage
 
-1. **Connect Wallet**: Click the "Connect Wallet" button to connect your Polkadot.js wallet.
+1. **Connect Wallet**: Click the "Connect Wallet" button to connect your Polkadot.js wallet or MetaMask.
 2. **Enter Contract Address**: Input the deployed contract address in the designated field.
 3. **Admin Functions**: If you're the shop owner (contract deployer), you can:
    - Record purchases for customers
@@ -141,9 +164,9 @@ restaurant-loyalty-polkadot/
 │   ├── pearl_leaves_loyalty/    # ink! contract implementation
 │   │   ├── Cargo.toml           # Contract dependencies
 │   │   └── lib.rs               # Contract code
-│   ├── Loyalty.sol              # Original Solidity contract (not used)
-│   ├── SimplifiedLoyalty.sol    # Simplified Solidity version (not used)
-│   └── MinimalLoyalty.sol       # Minimal Solidity version (not used)
+│   ├── Loyalty.sol              # Original Solidity contract
+│   ├── SimplifiedLoyalty.sol    # Simplified Solidity version
+│   └── MinimalLoyalty.sol       # Minimal Solidity version for Hardhat deployment
 ├── frontend/
 │   ├── public/                  # Static assets
 │   └── src/
@@ -152,7 +175,8 @@ restaurant-loyalty-polkadot/
 │       ├── utils/               # Utility functions
 │       └── App.tsx              # Main application
 └── docs/                        # Documentation
-    ├── ink_contract_deployment.md  # Contract deployment guide
+    ├── ink_contract_deployment.md  # ink! contract deployment guide
+    ├── hardhat_deployment.md       # Hardhat deployment guide
     └── frontend_deployment.md      # Frontend deployment guide
 ```
 
@@ -165,3 +189,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Polkadot and Parity Technologies for the Polkadot Asset Hub and PolkaVM
 - The ink! team for the smart contract language
 - The Polkadot.js team for the JavaScript API
+- The Hardhat team for the development environment
