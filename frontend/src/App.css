@@ -3,12 +3,13 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+  background-color: #f8f5f0;
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #68a678;
   padding: 20px;
   color: white;
   border-radius: 8px;
@@ -16,11 +17,20 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .App-header h1 {
   margin: 0;
   font-size: 1.8rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+.App-header h1 img {
+  height: 40px;
+  margin-right: 10px;
 }
 
 .App-main {
@@ -32,17 +42,19 @@
 .App-footer {
   margin-top: 40px;
   padding: 20px;
-  background-color: #f5f5f5;
+  background-color: #68a678;
   border-radius: 8px;
   font-size: 0.9rem;
-  color: #666;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .contract-address {
-  background-color: #f9f9f9;
+  background-color: white;
   padding: 20px;
   border-radius: 8px;
-  border: 1px solid #ddd;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .contract-address input {
@@ -51,30 +63,34 @@
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
 }
 
-.restaurant-section {
-  background-color: #f0f8ff;
+.shop-info {
+  background-color: white;
   padding: 20px;
   border-radius: 8px;
-  border: 1px solid #b8daff;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .admin-section {
-  background-color: #fff8f0;
+  background-color: white;
   padding: 20px;
   border-radius: 8px;
-  border: 1px solid #ffecd1;
+  border: 1px solid #e0e0e0;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .customer-section {
-  background-color: #f0fff4;
+  background-color: white;
   padding: 20px;
   border-radius: 8px;
-  border: 1px solid #d1ffec;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .customer-address input {
@@ -84,6 +100,7 @@
   border-radius: 4px;
   font-size: 1rem;
   margin-bottom: 20px;
+  font-family: 'Poppins', sans-serif;
 }
 
 .wallet-connect {
@@ -92,17 +109,20 @@
 }
 
 .connect-button {
-  background-color: #4caf50;
+  background-color: #f9a826;
   color: white;
   border: none;
   padding: 10px 20px;
   border-radius: 4px;
   cursor: pointer;
   font-size: 1rem;
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+  transition: background-color 0.3s;
 }
 
 .connect-button:hover {
-  background-color: #45a049;
+  background-color: #e09422;
 }
 
 .connect-button:disabled {
@@ -111,25 +131,26 @@
 }
 
 .wallet-info {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.2);
   padding: 8px 16px;
   border-radius: 20px;
 }
 
-.restaurant-info {
+.shop-info {
   text-align: left;
 }
 
-.restaurant-info h2 {
+.shop-info h2 {
   margin-top: 0;
-  color: #2c3e50;
+  color: #68a678;
+  font-weight: 600;
 }
 
 .issue-badge, .badge-actions {
   background-color: white;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   text-align: left;
 }
 
@@ -140,7 +161,8 @@
 .form-group label {
   display: block;
   margin-bottom: 5px;
-  font-weight: bold;
+  font-weight: 500;
+  color: #444;
 }
 
 .form-group input, .form-group select {
@@ -148,10 +170,11 @@
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
+  font-family: 'Poppins', sans-serif;
 }
 
 button {
-  background-color: #3498db;
+  background-color: #f9a826;
   color: white;
   border: none;
   padding: 10px 15px;
@@ -159,10 +182,13 @@ button {
   cursor: pointer;
   font-size: 1rem;
   margin-top: 10px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  transition: background-color 0.3s;
 }
 
 button:hover {
-  background-color: #2980b9;
+  background-color: #e09422;
 }
 
 button:disabled {
@@ -201,7 +227,12 @@ button:disabled {
   border-radius: 8px;
   padding: 15px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border-left: 5px solid #3498db;
+  border-left: 5px solid #68a678;
+  transition: transform 0.3s;
+}
+
+.badge-card:hover {
+  transform: translateY(-5px);
 }
 
 .badge-card.revoked {
@@ -211,7 +242,8 @@ button:disabled {
 
 .badge-card h4 {
   margin-top: 0;
-  color: #2c3e50;
+  color: #68a678;
+  font-weight: 600;
 }
 
 .badge-type, .badge-date, .badge-status {
@@ -220,7 +252,7 @@ button:disabled {
 }
 
 .badge-status {
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .badge-card.active .badge-status {
@@ -233,6 +265,119 @@ button:disabled {
 
 .check-badge, .revoke-badge {
   margin-bottom: 20px;
+}
+
+/* Menu Section */
+.menu-section {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  text-align: left;
+}
+
+.menu-section h2 {
+  color: #68a678;
+  font-weight: 600;
+  margin-top: 0;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.menu-category {
+  margin-bottom: 25px;
+}
+
+.menu-category h3 {
+  color: #f9a826;
+  font-weight: 600;
+  border-bottom: 2px solid #f9a826;
+  padding-bottom: 5px;
+  margin-bottom: 15px;
+}
+
+.menu-item {
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px dashed #e0e0e0;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.menu-item-name {
+  font-weight: 500;
+  color: #333;
+  margin: 0;
+}
+
+.menu-item-price {
+  font-weight: 600;
+  color: #68a678;
+}
+
+.menu-item-description {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 5px;
+  font-style: italic;
+}
+
+.add-ons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.add-on {
+  background-color: #f0f8f1;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  color: #68a678;
+}
+
+.nft-reward {
+  background-color: #fff8e6;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 20px;
+  border: 2px dashed #f9a826;
+  text-align: center;
+}
+
+.nft-reward h3 {
+  color: #f9a826;
+  margin-top: 0;
+}
+
+.nft-reward p {
+  margin-bottom: 0;
+}
+
+.progress-container {
+  margin-top: 15px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  height: 20px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #f9a826;
+  border-radius: 10px;
+  transition: width 0.3s ease;
 }
 
 @media (max-width: 768px) {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ethers } from 'ethers';
 import { BadgeType, issueBadge } from '../utils/contractUtils';
 
@@ -8,11 +8,11 @@ interface IssueBadgeProps {
 }
 
 const IssueBadge: React.FC<IssueBadgeProps> = ({ contractAddress, provider }) => {
-  const [customerAddress, setCustomerAddress] = useState<string>('');
-  const [badgeType, setBadgeType] = useState<BadgeType>(BadgeType.FIRST_VISIT);
-  const [isIssuing, setIsIssuing] = useState<boolean>(false);
-  const [txHash, setTxHash] = useState<string>('');
-  const [error, setError] = useState<string>('');
+  const [customerAddress, setCustomerAddress] = React.useState<string>('');
+  const [badgeType, setBadgeType] = React.useState<BadgeType>(BadgeType.FIRST_VISIT);
+  const [isIssuing, setIsIssuing] = React.useState<boolean>(false);
+  const [txHash, setTxHash] = React.useState<string>('');
+  const [error, setError] = React.useState<string>('');
 
   const handleIssue = async () => {
     if (!customerAddress) {
@@ -80,8 +80,8 @@ const IssueBadge: React.FC<IssueBadgeProps> = ({ contractAddress, provider }) =>
         >
           <option value={BadgeType.FIRST_VISIT}>First Visit</option>
           <option value={BadgeType.REGULAR}>Regular Customer</option>
-          <option value={BadgeType.GOURMET}>Gourmet Explorer</option>
-          <option value={BadgeType.VIP}>VIP Status</option>
+          <option value={BadgeType.GOURMET}>Tea Connoisseur</option>
+          <option value={BadgeType.VIP}>Bubble Tea Master</option>
         </select>
       </div>
       <button onClick={handleIssue} disabled={isIssuing}>

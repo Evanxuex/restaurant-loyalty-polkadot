@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import './App.css';
 import WalletConnect from './components/WalletConnect';
-import RestaurantInfo from './components/RestaurantInfo';
+import ShopInfo from './components/ShopInfo';
 import IssueBadge from './components/IssueBadge';
 import BadgeList from './components/BadgeList';
 import BadgeActions from './components/BadgeActions';
+import Menu from './components/Menu';
+import NFTReward from './components/NFTReward';
 import { getProvider } from './utils/contractUtils';
+import logo from './logo.svg';
 
 function App() {
   const [walletAddress, setWalletAddress] = useState<string>('');
@@ -14,6 +17,7 @@ function App() {
   const [customerAddress, setCustomerAddress] = useState<string>('');
   const [provider, setProvider] = useState<ethers.providers.Web3Provider | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
+  const [purchaseCount, setPurchaseCount] = useState<number>(0);
 
   useEffect(() => {
     if (walletAddress) {
@@ -31,10 +35,19 @@ function App() {
     setRefreshTrigger(prev => prev + 1);
   };
 
+  const simulatePurchase = () => {
+    if (purchaseCount < 10) {
+      setPurchaseCount(prev => prev + 1);
+    }
+  };
+
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Restaurant Loyalty Badge System</h1>
+        <h1>
+          <img src={logo} alt="Pearl & Leaves Logo" />
+          Pearl & Leaves Loyalty
+        </h1>
         <WalletConnect onConnect={handleWalletConnect} />
       </header>
 
@@ -49,9 +62,13 @@ function App() {
           />
         </div>
 
+        <Menu />
+
+        <NFTReward purchaseCount={purchaseCount} onPurchase={simulatePurchase} />
+
         {contractAddress && (
-          <div className="restaurant-section">
-            <RestaurantInfo contractAddress={contractAddress} />
+          <div className="shop-section">
+            <ShopInfo contractAddress={contractAddress} />
           </div>
         )}
 
@@ -94,7 +111,7 @@ function App() {
       </main>
 
       <footer className="App-footer">
-        <p>Restaurant Loyalty Badge System on Polkadot Asset Hub via PolkaVM</p>
+        <p>Pearl & Leaves Bubble Tea Loyalty Program on Polkadot Asset Hub via PolkaVM</p>
       </footer>
     </div>
   );

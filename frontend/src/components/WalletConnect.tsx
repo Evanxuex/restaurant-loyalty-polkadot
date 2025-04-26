@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { connectWallet } from '../utils/contractUtils';
+import React from 'react';
+import logo from '../logo.svg';
 
 interface WalletConnectProps {
   onConnect: (address: string) => void;
 }
 
 const WalletConnect: React.FC<WalletConnectProps> = ({ onConnect }) => {
-  const [address, setAddress] = useState<string>('');
-  const [isConnecting, setIsConnecting] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
+  const [address, setAddress] = React.useState<string>('');
+  const [isConnecting, setIsConnecting] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<string>('');
 
-  useEffect(() => {
+  React.useEffect(() => {
     // Check if already connected
     const checkConnection = async () => {
       if (window.ethereum && window.ethereum.selectedAddress) {
@@ -39,9 +39,13 @@ const WalletConnect: React.FC<WalletConnectProps> = ({ onConnect }) => {
     setError('');
     
     try {
-      const address = await connectWallet();
-      setAddress(address);
-      onConnect(address);
+      if (window.ethereum) {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        setAddress(accounts[0]);
+        onConnect(accounts[0]);
+      } else {
+        throw new Error("MetaMask is not installed");
+      }
     } catch (err: any) {
       setError(err.message || 'Failed to connect wallet');
     } finally {
