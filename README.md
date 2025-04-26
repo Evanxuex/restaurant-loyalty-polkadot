@@ -1,26 +1,26 @@
-# Restaurant Loyalty Badge System on Polkadot
+# Restaurant Loyalty Program on Polkadot - Pearl & Leaves Edition
 
-A blockchain-based loyalty program for restaurants using Polkadot Asset Hub via PolkaVM.
+A blockchain-based loyalty program for Pearl & Leaves Bubble Tea using Polkadot Asset Hub via PolkaVM.
 
 ## Problem & Solution
 
-### The Problem: Restaurant Loyalty Fragmentation
+### The Problem: Fragmented Loyalty Programs
 
-Traditional restaurant loyalty programs face several challenges:
+Traditional bubble tea shop loyalty programs face several challenges:
 
-- **Siloed Systems**: Each restaurant typically has its own isolated loyalty program, requiring customers to manage multiple accounts and cards.
+- **Siloed Systems**: Each shop typically has its own isolated loyalty program, requiring customers to manage multiple accounts and cards.
 - **Easy to Fake**: Paper punch cards and centralized databases are susceptible to fraud and manipulation.
 - **Limited Engagement**: Traditional points systems often fail to create meaningful engagement with customers.
 - **Lack of Transparency**: Customers have limited visibility into their rewards status and history.
 
-### The Solution: On-Chain Loyalty Badges
+### The Solution: On-Chain NFT Rewards
 
-Our solution leverages blockchain technology to create a tamper-proof, portable loyalty badge system:
+Our solution leverages blockchain technology to create a tamper-proof, engaging loyalty program:
 
-- **Blockchain-Based**: Badges are stored on the Polkadot Asset Hub blockchain, making them immutable and verifiable.
+- **Blockchain-Based**: Loyalty badges and NFT rewards are stored on the Polkadot Asset Hub blockchain, making them immutable and verifiable.
+- **NFT Rewards**: Customers earn an exclusive NFT after 10 purchases, creating a collectible digital asset.
 - **Gamified Experience**: Achievement-based badges create a more engaging experience than simple point accumulation.
-- **Portable**: Badges are tied to a customer's blockchain wallet, not a restaurant-specific account.
-- **Transparent**: All badge issuances and revocations are publicly verifiable on the blockchain.
+- **Transparent**: All badge issuances and NFT rewards are publicly verifiable on the blockchain.
 
 ## Technical Implementation
 
@@ -45,22 +45,24 @@ This project consists of two main components:
 
 The `Loyalty.sol` contract implements the following features:
 
-- Restaurant information storage (name and location)
-- Four badge types: First Visit, Regular Customer, Gourmet Explorer, and VIP Status
+- Shop information storage (name and location)
+- Four badge types: First Visit, Regular Customer, Tea Connoisseur, and Bubble Tea Master
 - Badge issuance to customer addresses
 - Badge revocation functionality
 - Badge status verification
 - Ownership management
+- NFT reward tracking for 10 purchases
 
 ### Frontend Features
 
 The React frontend provides:
 
 - Wallet connection via MetaMask
-- Restaurant information display
+- Shop information display
+- Complete menu display with prices and descriptions
+- NFT reward progress tracking
 - Admin panel for issuing and revoking badges
 - Customer badge viewing interface
-- Badge status checking
 
 ## Getting Started
 
@@ -82,8 +84,8 @@ The React frontend provides:
    - Chain ID: 1281
    - Currency Symbol: WND
 5. Deploy the contract with constructor parameters:
-   - Restaurant name (e.g., "Boston Bistro")
-   - Restaurant location (e.g., "Boston, MA")
+   - Shop name (e.g., "Pearl & Leaves")
+   - Shop location (e.g., "Boston, MA")
 6. Save the deployed contract address for frontend configuration
 
 ### Frontend Setup
@@ -134,31 +136,61 @@ Any user can:
    - Enter a customer's wallet address in the "Customer Badges" section
    - View all badges issued to that address
 
+2. **Track NFT Progress**:
+   - See their progress toward earning an NFT (10 purchases required)
+   - Use the "Simulate Purchase" button to test the functionality
+
+## Menu
+
+### Milk Teas
+- **Classic Pearl Milk Tea** — $5.25
+  (Black tea + milk + golden tapioca pearls)
+
+### Fruit Teas
+- **Mango Sunrise Tea** — $5.75
+  (Mango + passionfruit tea + real mango bits)
+- **Lychee Blossom Green Tea** — $5.50
+  (Lychee-infused green tea)
+
+### Specialty Drinks
+- **Brown Sugar Cloud** — $6.25
+  (Fresh milk + brown sugar syrup + brown sugar pearls)
+- **Matcha Lemon Fizz** — $6.00
+  (Sparkling matcha + lemon tea)
+- **Strawberry Jasmine Tea** — $5.75
+  (Jasmine tea + strawberry purée)
+- **Honeydew Milk Tea** — $5.50
+  (Honeydew flavor + milk)
+
+### Add-Ons (+$0.75)
+- Extra Boba (Pearls)
+- Aloe Vera
+- Lychee Jelly
+- Crystal Boba
+- Grass Jelly
+- Pudding
+
 ## Badge Types
 
 1. **First Visit Badge**:
-   - Awarded for a customer's first visit to the restaurant
+   - Awarded for a customer's first visit to Pearl & Leaves
    - Entry-level achievement
 
 2. **Regular Customer Badge**:
-   - Awarded for visiting the restaurant 5 times
+   - Awarded for visiting Pearl & Leaves 5 times
    - Recognizes customer loyalty
 
-3. **Gourmet Explorer Badge**:
-   - Awarded for trying at least 10 different dishes
+3. **Tea Connoisseur Badge**:
+   - Awarded for trying at least 5 different drinks
    - Encourages menu exploration
 
-4. **VIP Status Badge**:
+4. **Bubble Tea Master Badge**:
    - Awarded for being an exceptional customer
    - Highest tier of recognition
 
-## Future Enhancements
+## NFT Reward
 
-- Multi-restaurant support with a shared badge ecosystem
-- Integration with point-of-sale systems
-- Badge-based discount and reward system
-- Social sharing functionality for earned badges
-- Badge expiration and renewal mechanics
+After making 10 purchases at Pearl & Leaves, customers earn an exclusive NFT that represents their loyalty to the shop. This digital collectible is stored on the blockchain and can be viewed in any compatible wallet or NFT marketplace.
 
 ## Contract Address
 
