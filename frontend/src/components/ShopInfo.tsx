@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-import { getProvider, getContract, getShopInfo } from '../utils/contractUtils';
+import { getProvider, getContract, getRestaurantInfo } from '../utils/contractUtils';
 
 interface ShopInfoProps {
   contractAddress: string;
@@ -37,7 +37,7 @@ const ShopInfo: React.FC<ShopInfoProps> = ({ contractAddress }) => {
 
         // Try to get info from contract, but use default values if it fails
         try {
-          const info = await getShopInfo(contract);
+          const info = await getRestaurantInfo(contract);
           setName(info.name);
           setLocation(info.location);
         } catch (err) {
