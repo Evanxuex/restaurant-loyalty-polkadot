@@ -28,7 +28,7 @@ const BadgeList: React.FC<BadgeListProps> = ({ contractAddress, customerAddress,
         // Get purchase count
         const result = await getPurchaseCount(customerAddress);
         
-        if (result.success) {
+        if (result.success && typeof result.count === 'number') {
           setPurchaseCount(result.count);
         } else {
           setError(`Failed to get purchase count: ${result.error}`);
