@@ -1,5 +1,6 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { ContractPromise } from '@polkadot/api-contract';
+import { Codec } from '@polkadot/types/types';
 import contractAbi from '../contracts/PearlLeavesLoyaltyAbi.json';
 
 let api: ApiPromise | null = null;
@@ -55,7 +56,9 @@ export const getPurchaseCount = async (customerAddress: string) => {
     );
     
     if (result.isOk && output) {
-      return { success: true, count: output.toNumber() };
+      // Cast output to a type that has toNumber method
+      const count = (output as unknown as { toNumber: () => number }).toNumber();
+      return { success: true, count };
     } else {
       return { success: false, error: 'Failed to get purchase count' };
     }
