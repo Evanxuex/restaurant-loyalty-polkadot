@@ -38,7 +38,7 @@ function App() {
       if (isContractInitialized && customerAddress) {
         try {
           const result = await getPurchaseCount(customerAddress);
-          if (result.success) {
+          if (result.success && typeof result.count === 'number') {
             setPurchaseCount(result.count);
           }
         } catch (error) {
