@@ -1,38 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { ethers } from 'ethers';
-import { getAllBadges, Badge, formatBadgeType, formatTimestamp } from '../utils/contractUtils';
+import { initContract, getPurchaseCount } from '../utils/inkContractUtils';
 
 interface BadgeListProps {
   contractAddress: string;
   customerAddress: string;
-  provider: ethers.providers.Web3Provider | null;
   refreshTrigger: number;
 }
 
-const BadgeList: React.FC<BadgeListProps> = ({ 
-  contractAddress, 
-  customerAddress, 
-  provider,
-  refreshTrigger 
-}) => {
-  const [badges, setBadges] = useState<Badge[]>([]);
+const BadgeList: React.FC<BadgeListProps> = ({ contractAddress, customerAddress, refreshTrigger }) => {
+  const [purchaseCount, setPurchaseCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
 
   useEffect(() => {
-    const fetchBadges = async () => {
-      if (!customerAddress || !ethers.utils.isAddress(customerAddress)) {
-        setBadges([]);
-        return;
-      }
-
-      if (!provider) {
-        setError('Wallet not connected');
-        return;
-      }
-
-      if (!contractAddress || contractAddress === '0x0000000000000000000000000000000000000000') {
-        setError('Contract address not set');
+    const fetchPurchaseCount = async () => {
+      if (!contractAddress || !customerAddress) {
         return;
       }
 
@@ -40,51 +22,67 @@ const BadgeList: React.FC<BadgeListProps> = ({
       setError('');
 
       try {
-        const contract = new ethers.Contract(
-          contractAddress,
-          require('../contracts/LoyaltyABI.json'),
-          provider.getSigner()
-        );
-
-        const badgeList = await getAllBadges(contract, customerAddress);
-        setBadges(badgeList);
+        // Initialize contract
+        await initContract(contractAddress);
+        
+        // Get purchase count
+        const result = await getPurchaseCount(customerAddress);
+        
+        if (result.success) {
+          setPurchaseCount(result.count);
+        } else {
+          setError(`Failed to get purchase count: ${result.error}`);
+        }
       } catch (err: any) {
-        console.error('Error fetching badges:', err);
-        setError(err.message || 'Failed to fetch badges');
+        console.error('Error fetching purchase count:', err);
+        setError(err.message || 'Failed to fetch purchase count');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchBadges();
-  }, [contractAddress, customerAddress, provider, refreshTrigger]);
+    fetchPurchaseCount();
+  }, [contractAddress, customerAddress, refreshTrigger]);
 
   if (loading) {
-    return <div className="badge-list loading">Loading badges...</div>;
+    return <div className="badge-list loading">Loading purchase history...</div>;
   }
 
   if (error) {
     return <div className="badge-list error">Error: {error}</div>;
   }
 
-  if (badges.length === 0) {
-    return <div className="badge-list empty">No badges found for this customer</div>;
-  }
+  // Determine badge status based on purchase count
+  const hasBadges = purchaseCount > 0;
+  const badgeTypes = [];
+  
+  if (purchaseCount >= 1) badgeTypes.push("First Visit");
+  if (purchaseCount >= 3) badgeTypes.push("Regular Customer");
+  if (purchaseCount >= 7) badgeTypes.push("Tea Connoisseur");
+  if (purchaseCount >= 10) badgeTypes.push("Bubble Tea Master");
 
   return (
     <div className="badge-list">
-      <h3>Customer Badges</h3>
-      <div className="badges-container">
-        {badges.map((badge, index) => (
-          <div key={index} className={`badge-card ${badge.active ? 'active' : 'revoked'}`}>
-            <h4>{badge.name}</h4>
-            <p>{badge.description}</p>
-            <p className="badge-type">Type: {formatBadgeType(badge.badgeType)}</p>
-            <p className="badge-date">Issued: {formatTimestamp(badge.issuedAt)}</p>
-            <p className="badge-status">Status: {badge.active ? 'Active' : 'Revoked'}</p>
-          </div>
-        ))}
-      </div>
+      {hasBadges ? (
+        <>
+          <h3>Customer Badges</h3>
+          <p>Total Purchases: {purchaseCount}</p>
+          <ul>
+            {badgeTypes.map((badge, index) => (
+              <li key={index} className="badge-item">
+                <span className="badge-name">{badge}</span>
+              </li>
+            ))}
+          </ul>
+          {purchaseCount >= 10 && (
+            <div className="nft-earned">
+              <p>🎉 NFT Reward Earned! 🎉</p>
+            </div>
+          )}
+        </>
+      ) : (
+        <p>No purchases recorded for this customer yet.</p>
+      )}
     </div>
   );
 };

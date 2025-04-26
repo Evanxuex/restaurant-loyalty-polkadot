@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { ethers } from 'ethers';
 import './App.css';
 import WalletConnect from './components/WalletConnect';
 import ShopInfo from './components/ShopInfo';
@@ -8,36 +7,86 @@ import BadgeList from './components/BadgeList';
 import BadgeActions from './components/BadgeActions';
 import Menu from './components/Menu';
 import NFTReward from './components/NFTReward';
-import { getProvider } from './utils/contractUtils';
+import { initContract, getPurchaseCount, recordPurchase } from './utils/inkContractUtils';
 import logo from './logo.svg';
 
 function App() {
   const [walletAddress, setWalletAddress] = useState<string>('');
   const [contractAddress, setContractAddress] = useState<string>('');
   const [customerAddress, setCustomerAddress] = useState<string>('');
-  const [provider, setProvider] = useState<ethers.providers.Web3Provider | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
   const [purchaseCount, setPurchaseCount] = useState<number>(0);
+  const [isContractInitialized, setIsContractInitialized] = useState<boolean>(false);
 
   useEffect(() => {
-    if (walletAddress) {
-      setProvider(getProvider());
-    } else {
-      setProvider(null);
-    }
-  }, [walletAddress]);
+    const initializeContract = async () => {
+      if (contractAddress) {
+        const result = await initContract(contractAddress);
+        setIsContractInitialized(result.success);
+        
+        if (!result.success) {
+          console.error('Failed to initialize contract:', result.error);
+        }
+      }
+    };
+    
+    initializeContract();
+  }, [contractAddress]);
+
+  useEffect(() => {
+    const fetchPurchaseCount = async () => {
+      if (isContractInitialized && customerAddress) {
+        try {
+          const result = await getPurchaseCount(customerAddress);
+          if (result.success) {
+            setPurchaseCount(result.count);
+          }
+        } catch (error) {
+          console.error('Error fetching purchase count:', error);
+        }
+      }
+    };
+    
+    fetchPurchaseCount();
+  }, [isContractInitialized, customerAddress, refreshTrigger]);
 
   const handleWalletConnect = (address: string) => {
     setWalletAddress(address);
+    // Set customer address to wallet address by default
+    if (!customerAddress) {
+      setCustomerAddress(address);
+    }
   };
 
   const handleRefresh = () => {
     setRefreshTrigger(prev => prev + 1);
   };
 
-  const simulatePurchase = () => {
-    if (purchaseCount < 10) {
-      setPurchaseCount(prev => prev + 1);
+  const simulatePurchase = async () => {
+    if (!isContractInitialized || !walletAddress || !customerAddress) {
+      console.error('Cannot record purchase: contract not initialized or addresses missing');
+      return;
+    }
+    
+    try {
+      // In a real implementation, you would get the signer from the wallet
+      // For now, we'll just simulate the purchase by incrementing the count
+      const result = await recordPurchase(walletAddress, customerAddress);
+      if (result.success) {
+        handleRefresh(); // Refresh to update the purchase count
+      } else {
+        console.error('Failed to record purchase');
+        // For demo purposes, still increment the count
+        if (purchaseCount < 10) {
+          setPurchaseCount(prev => prev + 1);
+        }
+      }
+    } catch (error) {
+      console.error('Error recording purchase:', error);
+      // For demo purposes, still increment the count
+      if (purchaseCount < 10) {
+        setPurchaseCount(prev => prev + 1);
+      }
     }
   };
 
@@ -77,11 +126,12 @@ function App() {
             <h2>Admin Panel</h2>
             <IssueBadge 
               contractAddress={contractAddress} 
-              provider={provider} 
+              walletAddress={walletAddress}
+              onActionComplete={handleRefresh}
             />
             <BadgeActions 
               contractAddress={contractAddress} 
-              provider={provider}
+              walletAddress={walletAddress}
               onActionComplete={handleRefresh}
             />
           </div>
@@ -102,7 +152,6 @@ function App() {
               <BadgeList 
                 contractAddress={contractAddress} 
                 customerAddress={customerAddress} 
-                provider={provider}
                 refreshTrigger={refreshTrigger}
               />
             )}

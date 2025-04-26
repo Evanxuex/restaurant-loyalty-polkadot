@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ethers } from 'ethers';
-import { getProvider, getContract, getRestaurantInfo } from '../utils/contractUtils';
+import { initContract, getShopName } from '../utils/inkContractUtils';
 
 interface ShopInfoProps {
   contractAddress: string;
@@ -21,25 +20,25 @@ const ShopInfo: React.FC<ShopInfoProps> = ({ contractAddress }) => {
       }
 
       try {
-        const provider = getProvider();
-        if (!provider) {
-          setError('Provider not available');
-          setLoading(false);
-          return;
-        }
-
-        const contract = getContract(contractAddress, provider);
-        if (!contract) {
-          setError('Failed to initialize contract');
+        setLoading(true);
+        
+        // Initialize contract
+        const initResult = await initContract(contractAddress);
+        if (!initResult.success) {
+          setError('Failed to initialize contract: ' + initResult.error);
           setLoading(false);
           return;
         }
 
         // Try to get info from contract, but use default values if it fails
         try {
-          const info = await getRestaurantInfo(contract);
-          setName(info.name);
-          setLocation(info.location);
+          const nameResult = await getShopName();
+          if (nameResult.success) {
+            setName(nameResult.name);
+          } else {
+            console.log('Using default shop name');
+            // Keep default name
+          }
         } catch (err) {
           console.log('Using default shop info');
           // Keep default values

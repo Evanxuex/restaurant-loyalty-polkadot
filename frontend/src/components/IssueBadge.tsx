@@ -1,53 +1,41 @@
-import React from 'react';
-import { ethers } from 'ethers';
-import { BadgeType, issueBadge } from '../utils/contractUtils';
+import React, { useState, useEffect } from 'react';
+import { initContract, recordPurchase } from '../utils/inkContractUtils';
 
 interface IssueBadgeProps {
   contractAddress: string;
-  provider: ethers.providers.Web3Provider | null;
+  walletAddress: string;
+  onActionComplete: () => void;
 }
 
-const IssueBadge: React.FC<IssueBadgeProps> = ({ contractAddress, provider }) => {
-  const [customerAddress, setCustomerAddress] = React.useState<string>('');
-  const [badgeType, setBadgeType] = React.useState<BadgeType>(BadgeType.FIRST_VISIT);
-  const [isIssuing, setIsIssuing] = React.useState<boolean>(false);
-  const [txHash, setTxHash] = React.useState<string>('');
-  const [error, setError] = React.useState<string>('');
+const IssueBadge: React.FC<IssueBadgeProps> = ({ contractAddress, walletAddress, onActionComplete }) => {
+  const [customerAddress, setCustomerAddress] = useState<string>('');
+  const [isIssuing, setIsIssuing] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
+  const [success, setSuccess] = useState<string>('');
 
-  const handleIssue = async () => {
+  const handleIssueBadge = async () => {
     if (!customerAddress) {
       setError('Please enter a customer address');
       return;
     }
 
-    if (!ethers.utils.isAddress(customerAddress)) {
-      setError('Invalid customer address');
-      return;
-    }
-
-    if (!provider) {
-      setError('Wallet not connected');
-      return;
-    }
-
-    if (!contractAddress || contractAddress === '0x0000000000000000000000000000000000000000') {
-      setError('Contract address not set');
-      return;
-    }
-
     setIsIssuing(true);
     setError('');
-    setTxHash('');
+    setSuccess('');
 
     try {
-      const contract = new ethers.Contract(
-        contractAddress,
-        require('../contracts/LoyaltyABI.json'),
-        provider.getSigner()
-      );
-
-      const hash = await issueBadge(contract, customerAddress, badgeType);
-      setTxHash(hash);
+      // Initialize contract if needed
+      await initContract(contractAddress);
+      
+      // Record a purchase for the customer (simulates issuing a badge)
+      const result = await recordPurchase(walletAddress, customerAddress);
+      
+      if (result.success) {
+        setSuccess(`Successfully recorded purchase for ${customerAddress}`);
+        onActionComplete();
+      } else {
+        setError(`Failed to record purchase: ${result.error}`);
+      }
     } catch (err: any) {
       console.error('Error issuing badge:', err);
       setError(err.message || 'Failed to issue badge');
@@ -58,41 +46,26 @@ const IssueBadge: React.FC<IssueBadgeProps> = ({ contractAddress, provider }) =>
 
   return (
     <div className="issue-badge">
-      <h3>Issue Badge</h3>
+      <h3>Record Purchase / Issue Badge</h3>
       <div className="form-group">
-        <label htmlFor="customerAddress">Customer Address:</label>
+        <label>Customer Address:</label>
         <input
           type="text"
-          id="customerAddress"
           value={customerAddress}
           onChange={(e) => setCustomerAddress(e.target.value)}
-          placeholder="0x..."
-          disabled={isIssuing}
+          placeholder="Enter customer address"
         />
       </div>
-      <div className="form-group">
-        <label htmlFor="badgeType">Badge Type:</label>
-        <select
-          id="badgeType"
-          value={badgeType}
-          onChange={(e) => setBadgeType(Number(e.target.value) as BadgeType)}
-          disabled={isIssuing}
-        >
-          <option value={BadgeType.FIRST_VISIT}>First Visit</option>
-          <option value={BadgeType.REGULAR}>Regular Customer</option>
-          <option value={BadgeType.GOURMET}>Tea Connoisseur</option>
-          <option value={BadgeType.VIP}>Bubble Tea Master</option>
-        </select>
-      </div>
-      <button onClick={handleIssue} disabled={isIssuing}>
-        {isIssuing ? 'Issuing...' : 'Issue Badge'}
+      
+      <button 
+        onClick={handleIssueBadge}
+        disabled={isIssuing || !contractAddress || !walletAddress}
+      >
+        {isIssuing ? 'Processing...' : 'Record Purchase'}
       </button>
-      {error && <p className="error-message">{error}</p>}
-      {txHash && (
-        <p className="success-message">
-          Badge issued successfully! Transaction: {txHash.substring(0, 10)}...
-        </p>
-      )}
+      
+      {error && <div className="error-message">{error}</div>}
+      {success && <div className="success-message">{success}</div>}
     </div>
   );
 };
