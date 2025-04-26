@@ -25,7 +25,7 @@ const ShopInfo: React.FC<ShopInfoProps> = ({ contractAddress }) => {
         // Initialize contract
         const initResult = await initContract(contractAddress);
         if (!initResult.success) {
-          setError('Failed to initialize contract: ' + initResult.error);
+          setError('Failed to initialize contract: ' + (initResult.error || 'Unknown error'));
           setLoading(false);
           return;
         }
@@ -33,7 +33,7 @@ const ShopInfo: React.FC<ShopInfoProps> = ({ contractAddress }) => {
         // Try to get info from contract, but use default values if it fails
         try {
           const nameResult = await getShopName();
-          if (nameResult.success) {
+          if (nameResult.success && nameResult.name !== undefined) {
             setName(nameResult.name);
           } else {
             console.log('Using default shop name');
