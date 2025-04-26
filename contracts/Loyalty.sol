@@ -2,148 +2,106 @@
 pragma solidity ^0.8.0;
 
 /**
- * @title Restaurant Loyalty Badge System
- * @dev A simple loyalty badge system for a restaurant in Boston
- * @custom:dev-run-script ./scripts/deploy_with_polkavm.ts
+ * @title Simplified Loyalty Contract for Pearl & Leaves
+ * @dev A streamlined loyalty program for bubble tea shop with badges and NFT rewards
  */
-contract Loyalty {
+contract SimplifiedLoyalty {
+    // Shop information
+    string public shopName;
+    string public shopLocation;
+    
+    // Owner address
     address public owner;
-    string public restaurantName;
-    string public restaurantLocation;
     
-    // Badge types
-    enum BadgeType { FIRST_VISIT, REGULAR, GOURMET, VIP }
+    // Badge types (simplified to just 2 types)
+    enum BadgeType { FIRST_VISIT, REGULAR }
     
-    // Badge structure
+    // Badge structure (simplified)
     struct Badge {
         BadgeType badgeType;
-        string name;
-        string description;
         uint256 issuedAt;
-        bool active;
     }
     
-    // Mapping from customer address to their badges
-    mapping(address => Badge[]) public customerBadges;
+    // Customer data structure
+    mapping(address => Badge[]) private customerBadges;
+    mapping(address => uint256) private purchaseCounts;
     
     // Events
-    event BadgeIssued(address indexed customer, BadgeType badgeType, string name);
+    event BadgeIssued(address indexed customer, BadgeType badgeType);
     event BadgeRevoked(address indexed customer, uint256 badgeIndex);
+    event NFTRewarded(address indexed customer);
     
     // Constructor
-    constructor(string memory _restaurantName, string memory _restaurantLocation) {
+    constructor(string memory _shopName, string memory _shopLocation) {
+        shopName = _shopName;
+        shopLocation = _shopLocation;
         owner = msg.sender;
-        restaurantName = _restaurantName;
-        restaurantLocation = _restaurantLocation;
     }
     
     // Modifiers
     modifier onlyOwner() {
-        require(msg.sender == owner, "Only the restaurant owner can call this function");
+        require(msg.sender == owner, "Only owner can call this function");
         _;
     }
     
-    /**
-     * @dev Issue a new badge to a customer
-     * @param customer Address of the customer
-     * @param badgeType Type of badge to issue
-     */
+    // Issue a badge to a customer
     function issueBadge(address customer, BadgeType badgeType) external onlyOwner {
-        string memory name;
-        string memory description;
-        
-        if (badgeType == BadgeType.FIRST_VISIT) {
-            name = "First Visit";
-            description = "Awarded for your first visit to our restaurant";
-        } else if (badgeType == BadgeType.REGULAR) {
-            name = "Regular Customer";
-            description = "Awarded for visiting our restaurant 5 times";
-        } else if (badgeType == BadgeType.GOURMET) {
-            name = "Gourmet Explorer";
-            description = "Awarded for trying at least 10 different dishes";
-        } else if (badgeType == BadgeType.VIP) {
-            name = "VIP Status";
-            description = "Awarded for being an exceptional customer";
-        }
-        
-        Badge memory newBadge = Badge({
+        customerBadges[customer].push(Badge({
             badgeType: badgeType,
-            name: name,
-            description: description,
-            issuedAt: block.timestamp,
-            active: true
-        });
+            issuedAt: block.timestamp
+        }));
         
-        customerBadges[customer].push(newBadge);
-        
-        emit BadgeIssued(customer, badgeType, name);
+        emit BadgeIssued(customer, badgeType);
     }
     
-    /**
-     * @dev Revoke a badge from a customer
-     * @param customer Address of the customer
-     * @param badgeIndex Index of the badge to revoke
-     */
+    // Revoke a badge from a customer
     function revokeBadge(address customer, uint256 badgeIndex) external onlyOwner {
         require(badgeIndex < customerBadges[customer].length, "Badge index out of bounds");
-        require(customerBadges[customer][badgeIndex].active, "Badge already revoked");
         
-        customerBadges[customer][badgeIndex].active = false;
+        // Remove badge by replacing with the last one and then popping
+        uint256 lastIndex = customerBadges[customer].length - 1;
+        if (badgeIndex != lastIndex) {
+            customerBadges[customer][badgeIndex] = customerBadges[customer][lastIndex];
+        }
+        customerBadges[customer].pop();
         
         emit BadgeRevoked(customer, badgeIndex);
     }
     
-    /**
-     * @dev Get the number of badges a customer has
-     * @param customer Address of the customer
-     * @return Number of badges
-     */
+    // Record a purchase and check for NFT reward
+    function recordPurchase(address customer) external onlyOwner {
+        purchaseCounts[customer]++;
+        
+        // If customer has made 10 purchases, reward an NFT
+        if (purchaseCounts[customer] == 10) {
+            emit NFTRewarded(customer);
+        }
+    }
+    
+    // Get the number of badges for a customer
     function getBadgeCount(address customer) external view returns (uint256) {
         return customerBadges[customer].length;
     }
     
-    /**
-     * @dev Get badge details
-     * @param customer Address of the customer
-     * @param badgeIndex Index of the badge
-     * @return Badge type, name, description, issuance time, and active status
-     */
-    function getBadgeDetails(address customer, uint256 badgeIndex) external view returns (
-        BadgeType, string memory, string memory, uint256, bool
-    ) {
+    // Get badge details
+    function getBadgeDetails(address customer, uint256 badgeIndex) external view returns (BadgeType, uint256) {
         require(badgeIndex < customerBadges[customer].length, "Badge index out of bounds");
-        
         Badge memory badge = customerBadges[customer][badgeIndex];
-        return (
-            badge.badgeType,
-            badge.name,
-            badge.description,
-            badge.issuedAt,
-            badge.active
-        );
+        return (badge.badgeType, badge.issuedAt);
     }
     
-    /**
-     * @dev Check if a customer has a specific badge type
-     * @param customer Address of the customer
-     * @param badgeType Type of badge to check
-     * @return True if the customer has an active badge of the specified type
-     */
+    // Check if customer has a specific badge type
     function hasBadge(address customer, BadgeType badgeType) external view returns (bool) {
         for (uint256 i = 0; i < customerBadges[customer].length; i++) {
-            if (customerBadges[customer][i].badgeType == badgeType && customerBadges[customer][i].active) {
+            if (customerBadges[customer][i].badgeType == badgeType) {
                 return true;
             }
         }
         return false;
     }
     
-    /**
-     * @dev Transfer ownership of the contract
-     * @param newOwner Address of the new owner
-     */
-    function transferOwnership(address newOwner) external onlyOwner {
-        require(newOwner != address(0), "New owner cannot be the zero address");
-        owner = newOwner;
+    // Get purchase count
+    function getPurchaseCount(address customer) external view returns (uint256) {
+        return purchaseCounts[customer];
     }
 }
